@@ -12,9 +12,17 @@ from bark.generation import (
 from bark.api import semantic_to_waveform
 from bark import generate_audio, SAMPLE_RATE
 from scipy.io.wavfile import write as write_wav
+from dataclasses import dataclass
 
 
 nltk.download('punkt_tab')
+
+@dataclass
+class PDFAudioDenorm:
+    file_path: str
+    audio_file_path: str
+    
+
 
 def get_pdf_content(pdf_file_path: str) -> str | None:
     """
