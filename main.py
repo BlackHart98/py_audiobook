@@ -46,36 +46,50 @@ def get_pdf_content(pdf_file_path: str) -> str | None:
 
 
 def generate_sentences(pdf_content: str) -> t.List[str]:
+    """
+    Generate sentences from pdf_content
+    Args:
+        pdf_content (str): The input text to be processed.
+    Returns:
+        PDFAudioDenorm | None: The generated audio file.
+
+    """
     _pdf_content = pdf_content.replace("\n", " ").strip()    
     return nltk.sent_tokenize(_pdf_content) 
 
 
 def generate_audio_file(
+    file_path: str, 
     sentence_list: t.List[str], 
     device: str="cpu", 
     tts_model: str="v2/en_speaker_6",
     gen_temp = 0.6,
-) -> None:
+) -> PDFAudioDenorm | None:
     """
-    Generate audio files from pdf_content
+    Generate audio files from sentence_list
     Args:
-        pdf_content (str): The input text to be processed.
+        file_path (str): The input text to be processed.
+        sentence_list (List[str]): The input text to be processed.
     Returns:
-        t.Any | None: The generated audio file.
+        PDFAudioDenorm | None: The generated audio file.
 
     """
-    silence = np.zeros(int(0.25 * SAMPLE_RATE))
-    pieces = []
-    for sentence in sentence_list:
-        semantic_tokens = generate_text_semantic(
-            sentence,
-            history_prompt=tts_model,
-            temp=gen_temp,
-            min_eos_p=0.05,
-        )
-        audio_array = semantic_to_waveform(semantic_tokens, history_prompt=tts_model)
-        pieces += [audio_array, silence.copy()]
-    write_wav(f"output/sample.wav", SAMPLE_RATE, audio_array)
+    try:
+        silence = np.zeros(int(0.25 * SAMPLE_RATE))
+        pieces = []
+        for sentence in sentence_list:
+            semantic_tokens = generate_text_semantic(
+                sentence,
+                history_prompt=tts_model,
+                temp=gen_temp,
+                min_eos_p=0.05,
+            )
+            audio_array = semantic_to_waveform(semantic_tokens, history_prompt=tts_model)
+            pieces += [audio_array, silence.copy()]
+        write_wav(f"output/sample.wav", SAMPLE_RATE, audio_array) # side-effect
+        return PDFAudioDenorm(file_path, f"output/sample.wav") # I will revisit the output file
+    except:
+        return None
 
 
 
@@ -89,7 +103,7 @@ def main(argv: t.List[str]) -> int:
         file_path: str = argv[1]
         pdf_chunks: str | None = get_pdf_content(file_path)
         sentence_list: t.List[str] = generate_sentences(pdf_chunks) if pdf_chunks else []
-        generate_audio_file(sentence_list)
+        generate_audio_file(file_path, sentence_list)
         return 0
 
 
