@@ -13,7 +13,6 @@ from bark.api import semantic_to_waveform
 from bark import generate_audio, SAMPLE_RATE
 from scipy.io.wavfile import write as write_wav
 
-# Mantra: It's all about the data not the structure, let the data layout guide design...
 
 nltk.download('punkt_tab')
 
