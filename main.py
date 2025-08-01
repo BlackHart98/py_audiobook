@@ -17,8 +17,9 @@ from dataclasses import dataclass
 
 nltk.download('punkt_tab')
 
+# I will revisit this to normalize it as I understand the data
 @dataclass
-class PDFAudioDenorm:
+class PDFAudioDenorm: 
     file_path: str
     audio_file_path: str
     
@@ -87,7 +88,9 @@ def generate_audio_file(
             audio_array = semantic_to_waveform(semantic_tokens, history_prompt=tts_model)
             pieces += [audio_array, silence.copy()]
         write_wav(f"output/sample.wav", SAMPLE_RATE, audio_array) # side-effect
-        return PDFAudioDenorm(file_path, f"output/sample.wav") # I will revisit the output file
+        return PDFAudioDenorm(
+            file_path, 
+            f"output/sample.wav") # I will revisit the output file
     except:
         return None
 
