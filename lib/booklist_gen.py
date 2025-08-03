@@ -69,10 +69,10 @@ def render_booklist(booklist: BookList) -> str:
     return (header + "\n" + body)
 
 
-def commit_booklist(booklist: BookList, book_list_file_path: str) -> None:
+def commit_booklist(booklist: BookList, booklist_file_path: str) -> None:
     booklist_str = render_booklist(booklist)
     try:
-        with open(book_list_file_path, "w") as f:
+        with open(booklist_file_path, "w") as f:
             f.write(booklist_str)
             f.close()
     except:
