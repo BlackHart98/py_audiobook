@@ -12,6 +12,8 @@ class BookMeta:
 class BookList:
     version: str
     booklist_title: str
+    created_at: str
+    encoding: str
     book_meta_list: t.List[BookMeta]
 
 
@@ -23,6 +25,8 @@ def add_to_booklist(
     return BookList(
         version=dest_booklist.version, 
         booklist_title=dest_booklist.booklist_title, 
+        created_at=dest_booklist.created_at, 
+        encoding=dest_booklist.encoding, 
         book_meta_list=new_dest_booklist)
 
 
@@ -44,5 +48,12 @@ def commit_to_booklist(
 
 
 def parse_booklist(book_list_file_path: str) -> BookList | None:
-    
+    return None
+
+
+def create_new_booklist(book_list_file_path: str) -> None:
+    return None
+
+
+def render_booklist(book_list_file_path: str) -> None:
     return None
