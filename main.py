@@ -53,7 +53,6 @@ def generate_sentences(pdf_content: str) -> t.List[str]:
         pdf_content (str): The input text to be processed.
     Returns:
         PDFAudioDenorm | None: The generated audio file.
-
     """
     _pdf_content: str = pdf_content.replace("\n", " ").strip()    
     return nltk.sent_tokenize(_pdf_content) 
@@ -83,8 +82,7 @@ def generate_audio_file(
                 sentence,
                 history_prompt=tts_model,
                 temp=gen_temp,
-                min_eos_p=0.05,
-            )
+                min_eos_p=0.05,)
             audio_array = semantic_to_waveform(semantic_tokens, history_prompt=tts_model)
             pieces += [audio_array, silence.copy()]
         write_wav(f"output/sample.wav", SAMPLE_RATE, audio_array) # side-effect
