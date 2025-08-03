@@ -55,7 +55,7 @@ def generate_sentences(pdf_content: str) -> t.List[str]:
         PDFAudioDenorm | None: The generated audio file.
 
     """
-    _pdf_content = pdf_content.replace("\n", " ").strip()    
+    _pdf_content: str = pdf_content.replace("\n", " ").strip()    
     return nltk.sent_tokenize(_pdf_content) 
 
 
@@ -64,7 +64,7 @@ def generate_audio_file(
     sentence_list: t.List[str], 
     device: str="cpu", 
     tts_model: str="v2/en_speaker_6",
-    gen_temp = 0.6,
+    gen_temp: float=0.6,
 ) -> PDFAudioDenorm | None:
     """
     Generate audio files from sentence_list
@@ -79,7 +79,7 @@ def generate_audio_file(
         silence = np.zeros(int(0.25 * SAMPLE_RATE))
         pieces = []
         for sentence in sentence_list:
-            semantic_tokens = generate_text_semantic(
+            semantic_tokens: t.Any = generate_text_semantic(
                 sentence,
                 history_prompt=tts_model,
                 temp=gen_temp,
