@@ -47,8 +47,19 @@ def update_booklist(
     return None
 
 
-
+# poor man's parser
 def parse_booklist(booklist_file_path: str) -> BookList | None:
+    with open(booklist_file_path, "r") as f:
+        _content = [item for item in f.readlines() if "\n" in item]
+        f.close()
+    print(_content)
+    header_: t.List[str] = []
+    idx: int = 0
+    for item in _content:
+        header_ += [item]
+        if "#EXTBOOK:" in item:
+            break
+        idx += 1
     
     return None
 
