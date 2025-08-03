@@ -1,0 +1,18 @@
+#BOOKLIST
+#TITLE: ML Curriculum (Books + Audio)
+#CREATED: 2025-08-02
+#ENCODING: UTF-8
+
+#EXTBOOK: Introduction to Algorithms - Cormen et al.
+books/intro_algorithms.pdf
+#EXTAUDIO: audio/intro_algorithms.mp3;label=Standard MP3
+#EXTAUDIO: audio/intro_algorithms.aac;label=AAC High Quality
+
+#EXTBOOK: Deep Learning - Ian Goodfellow
+books/deep_learning.pdf
+#EXTAUDIO: audio/deep_learning.mp3;label=MP3
+#EXTAUDIO: audio/deep_learning_chapters.zip;label=Chaptered MP3
+
+#EXTBOOK: All of Statistics - Larry Wasserman
+books/statistics.pdf
+#EXTAUDIO: audio/statistics.mp3;label=MP3
