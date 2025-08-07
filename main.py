@@ -21,7 +21,7 @@ import pathlib as p
 
 nltk.download('punkt_tab')
 
-# I will revisit this to normalize it as I understand the data
+
 @dataclass
 class PDFAudioDenorm: 
     file_path: str
