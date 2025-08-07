@@ -30,7 +30,7 @@ def get_pdf_content(pdf_file_path: str) -> str | None:
     """
     Parse PDF and extract the content in the PDF as str of texts 
     Args:
-        pdf_file_path (str): The input text to be processed.
+        pdf_file_path (str): PDF file path.
     Returns:
         str | None: The generated response.
     """
@@ -50,7 +50,7 @@ def generate_sentences(pdf_content: str) -> t.List[str]:
     """
     Generate sentences from pdf_content
     Args:
-        pdf_content (str): The input text to be processed.
+        pdf_content (str): Content of the PDF.
     Returns:
         PDFAudioDenorm | None: The generated audio file.
     """
