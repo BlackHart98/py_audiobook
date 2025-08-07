@@ -1,3 +1,4 @@
+import os
 import nltk
 import sys
 import typing as t
@@ -23,7 +24,7 @@ nltk.download('punkt_tab')
 
 
 @dataclass
-class PDFAudioDenorm: 
+class PDFAudioBind: 
     file_path: str
     audio_file_path: str
     
@@ -41,7 +42,6 @@ def get_pdf_content(pdf_file_path: str) -> str | None:
         pdf_content: str = ""
         with fitz.open(pdf_file_path) as f:
             doc: t.Any = f
-            # f.close()
             for page in doc:
                 pdf_content += f"{page.get_text()}\n"
         return pdf_content
@@ -55,7 +55,7 @@ def generate_sentences(pdf_content: str) -> t.List[str]:
     Args:
         pdf_content (str): Content of the PDF.
     Returns:
-        PDFAudioDenorm | None: The generated audio file.
+        PDFAudioBind | None: The generated audio file.
     """
     _pdf_content: str = pdf_content.replace("\n", " ").strip()    
     return nltk.sent_tokenize(_pdf_content) 
@@ -70,14 +70,14 @@ def generate_audio_file(
     gen_temp: float=0.6,
     sample_rate: int=SAMPLE_RATE,
     target_dir: str="output"
-) -> PDFAudioDenorm | None:
+) -> PDFAudioBind | None:
     """
     Generate audio files from sentence_list
     Args:
         file_path (str): The file path.
         sentence_list (List[str]): The list of sentences.
     Returns:
-        PDFAudioDenorm | None: The generated audio file.
+        PDFAudioBind | None: The generated audio file.
     """
     try:
         silence = np.zeros(int(0.25 * sample_rate))
@@ -91,7 +91,7 @@ def generate_audio_file(
             audio_array = semantic_to_waveform(semantic_tokens, history_prompt=tts_model)
             pieces += [audio_array, silence.copy()] # interleave silence with generated speech
         write_wav(f"{target_dir}/{get_pdf_filename_unix(file_path)}.wav", sample_rate, audio_array) # side-effect
-        return PDFAudioDenorm(
+        return PDFAudioBind(
             file_path, 
             f"{target_dir}/{get_pdf_filename_unix(file_path)}.wav") # I will revisit the output file
     except:
@@ -121,9 +121,10 @@ def main(argv: t.List[str]) -> int:
         return 1
     else:
         file_path: str = my_args[0]
-        pdf_chunks: str | None = get_pdf_content(file_path)
+        abs_file_path = str(os.path.abspath(file_path))
+        pdf_chunks: str | None = get_pdf_content(abs_file_path)
         sentence_list: t.List[str] = generate_sentences(pdf_chunks) if pdf_chunks else []
-        pdf_audio_bind: PDFAudioDenorm | None = generate_audio_file(file_path, sentence_list)
+        pdf_audio_bind: PDFAudioBind | None = generate_audio_file(abs_file_path, sentence_list)
         print(pdf_audio_bind)
         return 0
 
