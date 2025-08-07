@@ -93,7 +93,7 @@ def generate_audio_file(
         write_wav(f"{target_dir}/{get_pdf_filename_unix(file_path)}.wav", sample_rate, audio_array) # side-effect
         return PDFAudioDenorm(
             file_path, 
-            f"{target_dir}/sample.wav") # I will revisit the output file
+            f"{target_dir}/{get_pdf_filename_unix(file_path)}.wav") # I will revisit the output file
     except:
         return None
 
