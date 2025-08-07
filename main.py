@@ -71,8 +71,8 @@ def generate_audio_file(
     """
     Generate audio files from sentence_list
     Args:
-        file_path (str): The input text to be processed.
-        sentence_list (List[str]): The input text to be processed.
+        file_path (str): The file path.
+        sentence_list (List[str]): The list of sentences.
     Returns:
         PDFAudioDenorm | None: The generated audio file.
     """
@@ -94,8 +94,16 @@ def generate_audio_file(
     except:
         return None
 
+
 # unix-path
 def get_pdf_filename_unix(file_path: str) -> str:
+    """
+    Get PDF file name from file path
+    Args:
+        file_path (str): The file path.
+    Returns:
+        str: filename
+    """
     file_path_list = file_path.split("/")
     file_name = file_path_list[len(file_path_list) - 1].replace(".", "__") # I will revisit this guy
     print(file_name)
