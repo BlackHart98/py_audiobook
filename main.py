@@ -7,10 +7,13 @@ import fitz
 import numpy as np
 from bark.generation import (
     generate_text_semantic,
-    preload_models,
+    # preload_models,
 )
 from bark.api import semantic_to_waveform
-from bark import generate_audio, SAMPLE_RATE
+from bark import (
+    # generate_audio, 
+    SAMPLE_RATE,
+)
 from scipy.io.wavfile import write as write_wav
 from dataclasses import dataclass
 import pathlib as p
@@ -120,7 +123,8 @@ def main(argv: t.List[str]) -> int:
         file_path: str = my_args[0]
         pdf_chunks: str | None = get_pdf_content(file_path)
         sentence_list: t.List[str] = generate_sentences(pdf_chunks) if pdf_chunks else []
-        generate_audio_file(file_path, sentence_list)
+        pdf_audio_bind: PDFAudioDenorm | None = generate_audio_file(file_path, sentence_list)
+        print(pdf_audio_bind)
         return 0
 
 
