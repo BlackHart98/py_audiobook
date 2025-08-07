@@ -13,6 +13,7 @@ from bark.api import semantic_to_waveform
 from bark import generate_audio, SAMPLE_RATE
 from scipy.io.wavfile import write as write_wav
 from dataclasses import dataclass
+import pathlib as p
 
 
 nltk.download('punkt_tab')
@@ -33,7 +34,6 @@ def get_pdf_content(pdf_file_path: str) -> str | None:
     Returns:
         str | None: The generated response.
     """
-    print("Chunking files...")
     try:
         pdf_content: str = ""
         with fitz.open(pdf_file_path) as f:
@@ -58,12 +58,15 @@ def generate_sentences(pdf_content: str) -> t.List[str]:
     return nltk.sent_tokenize(_pdf_content) 
 
 
+# unix-path
 def generate_audio_file(
     file_path: str, 
     sentence_list: t.List[str], 
     device: str="cpu", 
     tts_model: str="v2/en_speaker_6",
     gen_temp: float=0.6,
+    sample_rate: int=SAMPLE_RATE,
+    target_dir: str="output"
 ) -> PDFAudioDenorm | None:
     """
     Generate audio files from sentence_list
@@ -72,10 +75,9 @@ def generate_audio_file(
         sentence_list (List[str]): The input text to be processed.
     Returns:
         PDFAudioDenorm | None: The generated audio file.
-
     """
     try:
-        silence = np.zeros(int(0.25 * SAMPLE_RATE))
+        silence = np.zeros(int(0.25 * sample_rate))
         pieces = []
         for sentence in sentence_list:
             semantic_tokens: t.Any = generate_text_semantic(
@@ -84,24 +86,30 @@ def generate_audio_file(
                 temp=gen_temp,
                 min_eos_p=0.05,)
             audio_array = semantic_to_waveform(semantic_tokens, history_prompt=tts_model)
-            pieces += [audio_array, silence.copy()]
-        write_wav(f"output/sample.wav", SAMPLE_RATE, audio_array) # side-effect
+            pieces += [audio_array, silence.copy()] # interleave silence with generated speech
+        write_wav(f"{target_dir}/{get_pdf_filename_unix(file_path)}.wav", sample_rate, audio_array) # side-effect
         return PDFAudioDenorm(
             file_path, 
-            f"output/sample.wav") # I will revisit the output file
+            f"{target_dir}/sample.wav") # I will revisit the output file
     except:
         return None
 
-
+# unix-path
+def get_pdf_filename_unix(file_path: str) -> str:
+    file_path_list = file_path.split("/")
+    file_name = file_path_list[len(file_path_list) - 1].replace(".", "__") # I will revisit this guy
+    print(file_name)
+    return file_name
 
 
 def main(argv: t.List[str]) -> int:
-    if len(argv) != 2:
+    my_args = argv[1:]
+    if len(my_args) != 1:
         logging.error("Invalid command.")
         print("Usage: python main.py <file_path>")
         return 1
     else:
-        file_path: str = argv[1]
+        file_path: str = my_args[0]
         pdf_chunks: str | None = get_pdf_content(file_path)
         sentence_list: t.List[str] = generate_sentences(pdf_chunks) if pdf_chunks else []
         generate_audio_file(file_path, sentence_list)

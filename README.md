@@ -22,3 +22,4 @@ python main.py <pdf_file_path>
 ```
 > [!Note]
 > <pdf_file_path> is a placeholder for the path the pdf file
+> This is a prototype, I intend to move the code to C (not C++ 😏)
