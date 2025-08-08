@@ -20,7 +20,6 @@ def main(argv: t.List[str]) -> int:
         abs_file_path: str = str(os.path.abspath(file_path))
         pdf_chunks: str | None = get_pdf_content(abs_file_path)
         sentence_list: t.List[str] = generate_sentences(pdf_chunks) if pdf_chunks else []
-        print(sentence_list)
         pdf_audio_bind: PDFAudioBind | None = generate_audio_file(abs_file_path, sentence_list)
         print(pdf_audio_bind)
         return 0
