@@ -33,8 +33,7 @@ class PDFAudioBind:
 
 
 def get_pdf_content(pdf_file_path: str) -> str | None:
-    """
-    Parse PDF and extract the content in the PDF as str of texts 
+    """Parse PDF and extract the content in the PDF as str of texts 
     Args:
         pdf_file_path (str): PDF file path.
     Returns:
@@ -52,8 +51,7 @@ def get_pdf_content(pdf_file_path: str) -> str | None:
 
 
 def generate_sentences(pdf_content: str) -> t.List[str]:
-    """
-    Generate sentences from pdf_content
+    """Generate sentences from pdf_content
     Args:
         pdf_content (str): Content of the PDF.
     Returns:
@@ -72,8 +70,7 @@ def generate_audio_file(
     voice_preset: str="v2/en_speaker_6",
     target_dir: str="output",
 ) -> PDFAudioBind | None:
-    """
-    Generate audio files from sentence_list
+    """Generate audio files from sentence_list
     Args:
         file_path (str): The file path.
         sentence_list (List[str]): The list of sentences.
@@ -107,8 +104,7 @@ def generate_audio_file(
 
 # unix-path
 def get_pdf_filename_unix(file_path: str) -> str:
-    """
-    Get PDF file name from file path
+    """Get PDF file name from file path
     Args:
         file_path (str): The file path.
     Returns:
