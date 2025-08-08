@@ -3,6 +3,7 @@ import sys
 import logging
 import typing as t
 from lib import *
+import pathlib as p
 
 
 def main(argv: t.List[str]) -> int:
@@ -13,7 +14,10 @@ def main(argv: t.List[str]) -> int:
         return 1
     else:
         file_path: str = my_args[0]
-        abs_file_path = str(os.path.abspath(file_path))
+        if not p.Path(file_path).exists():
+            logging.error("File does not exist.")
+            return 1
+        abs_file_path: str = str(os.path.abspath(file_path))
         pdf_chunks: str | None = get_pdf_content(abs_file_path)
         sentence_list: t.List[str] = generate_sentences(pdf_chunks) if pdf_chunks else []
         print(sentence_list)

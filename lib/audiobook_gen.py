@@ -4,6 +4,7 @@ import sys
 import typing as t
 import logging
 import fitz
+from enum import Enum, IntEnum
 
 import numpy as np
 from bark.generation import (
@@ -18,7 +19,8 @@ from bark import (
 from scipy.io.wavfile import write as write_wav
 from dataclasses import dataclass
 import pathlib as p
-
+from transformers import AutoProcessor, BarkModel
+import torch
 
 nltk.download('punkt_tab')
 
@@ -65,11 +67,10 @@ def generate_sentences(pdf_content: str) -> t.List[str]:
 def generate_audio_file(
     file_path: str, 
     sentence_list: t.List[str], 
+    tts_model_path: str="suno/bark-small",
     device: str="cpu", 
-    tts_model: str="v2/en_speaker_6",
-    gen_temp: float=0.6,
-    sample_rate: int=SAMPLE_RATE,
-    target_dir: str="output"
+    voice_preset: str="v2/en_speaker_6",
+    target_dir: str="output",
 ) -> PDFAudioBind | None:
     """
     Generate audio files from sentence_list
@@ -80,17 +81,23 @@ def generate_audio_file(
         PDFAudioBind | None: The generated audio file.
     """
     try:
+        device: str = device
+        model: BarkModel = BarkModel.from_pretrained(tts_model_path,)
+        processor: t.Any = AutoProcessor.from_pretrained(tts_model_path,)
+        model.to(device)
+        sample_rate = model.generation_config.sample_rate
         silence = np.zeros(int(0.25 * sample_rate))
         pieces = []
         for sentence in sentence_list:
-            semantic_tokens: t.Any = generate_text_semantic(
-                sentence,
-                history_prompt=tts_model,
-                temp=gen_temp,
-                min_eos_p=0.05,)
-            audio_array = semantic_to_waveform(semantic_tokens, history_prompt=tts_model)
-            pieces += [audio_array, silence.copy()] # interleave silence with generated speech
-        write_wav(f"{target_dir}/{get_pdf_filename_unix(file_path)}.wav", sample_rate, audio_array) # side-effect
+            inputs_ = processor(sentence, voice_preset=voice_preset, return_tensors="pt")
+            inputs = {k: v.to(device) for k, v in inputs_.items()}
+            
+            with torch.no_grad():
+                audio_array = model.generate(**inputs, pad_token_id=10000)
+
+            audio_array = audio_array.cpu().numpy().squeeze()
+            pieces += [audio_array, silence.copy()]
+        write_wav(f"{target_dir}/{get_pdf_filename_unix(file_path)}.wav", sample_rate, np.concatenate(pieces)) # side-effect
         return PDFAudioBind(
             file_path, 
             f"{target_dir}/{get_pdf_filename_unix(file_path)}.wav") # I will revisit the output file
@@ -108,5 +115,8 @@ def get_pdf_filename_unix(file_path: str) -> str:
         str: filename
     """
     file_path_list = file_path.split("/")
-    file_name = file_path_list[len(file_path_list) - 1].replace(".", "__") # I will revisit this guy
-    print(file_name)
+    filename = file_path_list[len(file_path_list) - 1].replace(".", "__") # I will revisit this guy
+    filename_list = file_path_list[len(file_path_list) - 1].split(".")
+    print(filename_list)
+    
+    return filename
