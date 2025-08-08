@@ -111,8 +111,6 @@ def get_pdf_filename_unix(file_path: str) -> str:
         str: filename
     """
     file_path_list = file_path.split("/")
-    filename = file_path_list[len(file_path_list) - 1].replace(".", "__") # I will revisit this guy
     filename_list = file_path_list[len(file_path_list) - 1].split(".")
-    print(filename_list)
-    
+    filename = ".".join(filename_list[:len(filename_list) - 1])
     return filename
