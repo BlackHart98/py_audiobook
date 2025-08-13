@@ -21,8 +21,11 @@ from dataclasses import dataclass
 import pathlib as p
 from transformers import AutoProcessor, BarkModel
 import torch
+import pathlib as p
 
-nltk.download('punkt_tab')
+
+if not p.Path().home().joinpath("nltk_data").is_dir():
+    nltk.download('punkt_tab')
 
 
 @dataclass
